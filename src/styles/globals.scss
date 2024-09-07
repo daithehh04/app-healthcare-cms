@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+MX:wght@100..400&display=swap');
+
+.logo {
+     font-family: "Playwrite MX", cursive;
+}
+
+.custom-modal-content {
+     width: 700px;
+     max-width: 100%;
+}
+
+.book-appointment-modal-content {
+     width: 450px;
+     max-width: 100%;
+}
