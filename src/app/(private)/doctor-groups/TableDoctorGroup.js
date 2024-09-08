@@ -175,7 +175,8 @@ function TableDoctorGroup() {
     setErrors({});
     onOpen();
   };
-  const handleChangeArticle = (field, value) => {
+  const handleChangeDoctorGroup = (field, value) => {
+    console.log(field, value);
     validate(field, value);
     setDoctorGroupDetail({
       ...doctorGroupDetail,
@@ -220,6 +221,7 @@ function TableDoctorGroup() {
       default:
         return cellValue;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const columns = [
@@ -289,7 +291,7 @@ function TableDoctorGroup() {
               isInvalid={errors?.["name"] ? true : false}
               errorMessage={errors?.["name"]}
               value={doctorGroupDetail?.name}
-              onChange={(e) => ("name", e.target.value)}
+              onChange={(e) => handleChangeDoctorGroup("name", e.target.value)}
             />
           </>
         );
@@ -305,8 +307,8 @@ function TableDoctorGroup() {
               label="Tiêu đề"
               isInvalid={errors?.["name"] ? true : false}
               errorMessage={errors?.["name"]}
-              value={doctorGroupDetail?.title}
-              onChange={(e) => handleChangeArticle("title", e.target.value)}
+              value={doctorGroupDetail?.name}
+              onChange={(e) => handleChangeDoctorGroup("name", e.target.value)}
             />
           </>
         );

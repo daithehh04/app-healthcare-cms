@@ -45,8 +45,8 @@ import { formatVND } from "./utils/formatVND";
 import { useForm } from "react-hook-form";
 import moment from "moment";
 import { useDropzone } from "react-dropzone";
-import { groupDoctors } from "./configs/groupdoctor";
 import { toast } from "sonner";
+import { useGetAllDoctorGroupQuery } from "@/stores/slices/api/doctor-group.slices.api";
 import { useUploadImageMutation } from "@/stores/slices/api/upload.slices.api";
 import _ from "lodash";
 
@@ -70,8 +70,10 @@ const Doctor = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(2);
   const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
+  const { data } = useGetAllDoctorGroupQuery({ page: 1, limit: 100 });
+  const doctorGroups = data?.data?.doctorGroups?.map((item) => {
+    return { key: item.id, label: item.name };
+  });
   const queryParams = {};
   searchParams.forEach((value, key) => {
     queryParams[key] = value;
@@ -195,7 +197,6 @@ const Doctor = () => {
     setLimit(Number(e.target.value));
     setPage(1);
   }, []);
-  console.log("pages", pages);
 
   const topContent = useMemo(
     () => (
@@ -295,7 +296,6 @@ const Doctor = () => {
 
   const renderCell = useCallback((user, columnKey) => {
     const cellValue = user[columnKey];
-    console.log("columnKey,user", columnKey, user);
     switch (columnKey) {
       case "name":
         return (
@@ -553,7 +553,7 @@ const Doctor = () => {
                         isDisabled={type === "view"}
                         className="max-w-xs"
                       >
-                        {groupDoctors.map((groupDoctor) => (
+                        {doctorGroups?.map((groupDoctor) => (
                           <SelectItem key={groupDoctor.key}>
                             {groupDoctor.label}
                           </SelectItem>
