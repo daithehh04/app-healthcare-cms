@@ -10,4 +10,5 @@ export const endPointApi = {
   DOCTOR: "doctors",
   BOOK_APPOINTMENT: "book-appointments",
   UPLOAD_IMAGE: "image",
+  DOCTOR_GROUP: "/doctor-group",
 };

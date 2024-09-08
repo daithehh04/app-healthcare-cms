@@ -1,9 +1,8 @@
-import React from 'react'
+import React from "react";
+import TableDoctorGroup from "./TableDoctorGroup";
 
 const DoctorGroup = () => {
-     return (
-          <div>DoctorGroup</div>
-     )
-}
+  return <TableDoctorGroup />;
+};
 
-export default DoctorGroup
+export default DoctorGroup;
