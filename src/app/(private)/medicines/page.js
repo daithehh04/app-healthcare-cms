@@ -1,10 +1,12 @@
-import React from 'react'
-import TableProduct from './TableProduct';
+import React from "react";
+import TableProduct from "./TableProduct";
 
 const Medicines = () => {
-     return (
-          <TableProduct/>
-     )
-}
+  return (
+    <>
+      <TableProduct />
+    </>
+  );
+};
 
-export default Medicines
+export default Medicines;

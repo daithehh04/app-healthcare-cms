@@ -46,6 +46,11 @@ import {
   doctorGroupApiReducerPath,
   doctorGroupApiMiddleware,
 } from "./slices/api/doctor-group.slices.api";
+import {
+  categoryMedicineApiReducer,
+  categoryMedicineApiReducerPath,
+  categoryMedicineApiMiddleware,
+} from "./slices/api/category-medicine.slices.api";
 export const store = configureStore({
   reducer: {
     bookAppointment: bookAppointmentReducer,
@@ -59,6 +64,7 @@ export const store = configureStore({
     [cartApiReducerPath]: cartApiReducer,
     [userApiReducerPath]: userApiReducer,
     [doctorGroupApiReducerPath]: doctorGroupApiReducer,
+    [categoryMedicineApiReducerPath]: categoryMedicineApiReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -70,5 +76,6 @@ export const store = configureStore({
       .concat(cartApiMiddleware)
       .concat(articleApiMiddleware)
       .concat(userApiMiddleware)
-      .concat(doctorGroupApiMiddleware),
+      .concat(doctorGroupApiMiddleware)
+      .concat(categoryMedicineApiMiddleware),
 });

@@ -10,6 +10,8 @@ import {
   useDisclosure,
   Input,
   Textarea,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import {
   useGetAllProductsQuery,
@@ -17,6 +19,12 @@ import {
   useUpdateProductMutation,
   useDeleteProductMutation,
 } from "@/stores/slices/api/product.slices.api";
+import {
+  useGetAllCategoryMedicineQuery,
+  useCreateCategoryMedicineMutation,
+  useDeleteCategoryMedicineMutation,
+  useUpdateCategoryMedicineMutation,
+} from "@/stores/slices/api/category-medicine.slices.api";
 import {
   Table,
   TableHeader,
@@ -37,6 +45,7 @@ import UploadImage from "../components/UploadImage";
 import { IoWarningOutline } from "react-icons/io5";
 import _ from "lodash";
 import { toast } from "sonner";
+import CategoryProduct from "./CategoryProduct";
 export const SERVER_URL = process.env.SERVER_URL;
 
 function TableProduct() {
@@ -60,9 +69,11 @@ function TableProduct() {
     useUpdateProductMutation();
   const [deleteProduct, { isLoading: loadingDelete }] =
     useDeleteProductMutation();
+  const { data: medicineCategory, isLoading: isLoadingCategory } =
+    useGetAllCategoryMedicineQuery({ page: 1, limit: 100 });
   const handleCheckCreate = () => {
     if (productDetail) {
-      if (Object.keys(productDetail).length === 4 && !isError && files.length) {
+      if (Object.keys(productDetail).length === 5 && !isError && files.length) {
         return true;
       }
     }
@@ -244,7 +255,7 @@ function TableProduct() {
     { name: "ACTIONS", uid: "actions" },
   ];
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading || isLoadingCategory) return <div>Loading...</div>;
   const rowsPerPage = query.limit;
   const pages = Math.ceil(data?.data?.count / rowsPerPage);
   const allProducts = data?.data.medicines;
@@ -285,6 +296,11 @@ function TableProduct() {
     setFiles([]);
   };
 
+  const categoryMedicine = medicineCategory?.data?.categoryMedicine?.map(
+    (item) => {
+      return { key: item.id, label: item.name };
+    }
+  );
   const getBodyModal = () => {
     switch (typeAction) {
       case "view":
@@ -298,6 +314,7 @@ function TableProduct() {
               className="m-5"
             />
             <p>{productDetail?.name}</p>
+            <p>Loại thuốc: {productDetail?.categoryMedicine?.name}</p>
             <p>{productDetail?.description}</p>
             <p>Old Price: {productDetail?.old_price}</p>
             <p>New Price: {productDetail?.new_price}</p>
@@ -318,6 +335,17 @@ function TableProduct() {
               value={productDetail?.name}
               onChange={(e) => handleChangeProduct("name", e.target.value)}
             />
+            <Select
+              items={categoryMedicine}
+              label="Loại thuốc"
+              defaultSelectedKeys={[productDetail.categoryMedicine.id]}
+              className="max-max-w-full"
+              onChange={(e) =>
+                handleChangeProduct("category_medicine_id", e.target.value)
+              }
+            >
+              {(category) => <SelectItem>{category.label}</SelectItem>}
+            </Select>
             <Textarea
               label="Mô tả"
               isInvalid={errors?.["description"] ? true : false}
@@ -358,6 +386,16 @@ function TableProduct() {
               value={productDetail?.name}
               onChange={(e) => handleChangeProduct("name", e.target.value)}
             />
+            <Select
+              items={categoryMedicine}
+              label="Loại thuốc"
+              className="max-max-w-full"
+              onChange={(e) =>
+                handleChangeProduct("category_medicine_id", e.target.value)
+              }
+            >
+              {(category) => <SelectItem>{category.label}</SelectItem>}
+            </Select>
             <Textarea
               label="Mô tả"
               isInvalid={errors?.["description"] ? true : false}
@@ -421,6 +459,7 @@ function TableProduct() {
       >
         Tạo mới <IoMdAddCircleOutline fontSize={"1.2rem"} />
       </Button>
+      <CategoryProduct />
       <Table
         aria-label="Example table with custom cells"
         bottomContent={
