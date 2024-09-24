@@ -12,4 +12,6 @@ export const endPointApi = {
   UPLOAD_IMAGE: "image",
   DOCTOR_GROUP: "/doctor-group",
   CATEGORY_MEDICINE: "/category-medicine",
+  BRANCH: "/branch",
+  BRANCHES: "/branches",
 };

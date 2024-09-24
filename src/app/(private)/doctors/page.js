@@ -47,6 +47,7 @@ import moment from "moment";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { useGetAllDoctorGroupQuery } from "@/stores/slices/api/doctor-group.slices.api";
+import { useGetAllBranchesQuery } from "@/stores/slices/api/branch.slice.api";
 import { useUploadImageMutation } from "@/stores/slices/api/upload.slices.api";
 import _ from "lodash";
 
@@ -71,9 +72,14 @@ const Doctor = () => {
   const [limit, setLimit] = useState(2);
   const searchParams = useSearchParams();
   const { data } = useGetAllDoctorGroupQuery({ page: 1, limit: 100 });
+  const { data: allBranches } = useGetAllBranchesQuery({ page: 1, limit: 100 });
   const doctorGroups = data?.data?.doctorGroups?.map((item) => {
     return { key: item.id, label: item.name };
   });
+  const branchesGroup = allBranches?.data?.branches?.map((item) => {
+    return { key: item.id, label: item.address };
+  });
+
   const queryParams = {};
   searchParams.forEach((value, key) => {
     queryParams[key] = value;

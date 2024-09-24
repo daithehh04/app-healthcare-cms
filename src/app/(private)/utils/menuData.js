@@ -4,7 +4,7 @@ import { GiMedicines } from "react-icons/gi";
 import { FaCircleUser } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md";
 import { FaCartShopping } from "react-icons/fa6";
-import { FaUserNurse } from "react-icons/fa";
+import { FaCodeBranch, FaUserNurse } from "react-icons/fa";
 export const menu = [
   {
     title: "Người dùng",
@@ -30,6 +30,11 @@ export const menu = [
     title: "Đặt thuốc",
     path: "/carts",
     icon: <FaCartShopping className="text-[20px] text-[#404040]" />,
+  },
+  {
+    title: "Chi nhánh",
+    path: "/branches",
+    icon: <FaCodeBranch className="text-[20px] text-[#404040]" />,
   },
   {
     title: "Lịch khám",
