@@ -107,6 +107,7 @@ const Doctor = () => {
       setValue("exp", currentDoctor.exp);
       setValue("price", currentDoctor.price);
       setValue("doctor_group_id", currentDoctor.doctor_group_id);
+      setValue("branch_id", currentDoctor.branch_id);
       setUploadedImage(currentDoctor.image);
     }
   }, [currentDoctor, setValue]);
@@ -125,6 +126,7 @@ const Doctor = () => {
       setPage(page - 1);
     }
   }, [page]);
+
   const onSubmit = async (data) => {
     try {
       setLoading(true);
@@ -568,6 +570,26 @@ const Doctor = () => {
                       {errors?.["doctor_group_id"] && (
                         <p className="p-2 text-sm text-red-500 ">
                           {errors?.["doctor_group_id"]?.message}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      <Select
+                        {...register("branch_id", {
+                          required: "Chi nhánh không được rỗng",
+                        })}
+                        label="Chọn chi nhánh"
+                        isDisabled={type === "view"}
+                      >
+                        {branchesGroup?.map((branch) => (
+                          <SelectItem key={branch.key}>
+                            {branch.label}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                      {errors?.["branch_id"] && (
+                        <p className="p-2 text-sm text-red-500 ">
+                          {errors?.["branch_id"]?.message}
                         </p>
                       )}
                     </div>
