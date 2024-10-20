@@ -212,7 +212,7 @@ const Doctor = () => {
         <div className="flex items-end justify-between gap-3">
           <Input
             onChange={(e) => debouncedFetchResults(e.target.value)}
-            className="w-full sm:max-w-[44%]"
+            className="w-full"
             placeholder="Tìm kiếm theo id, tên bác sĩ..."
             startContent={<SearchIcon />}
             onClear={() => onClear()}
