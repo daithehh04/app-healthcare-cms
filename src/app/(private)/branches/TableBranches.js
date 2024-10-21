@@ -316,7 +316,7 @@ function TableBranches() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={allDoctorGroup}>
+        <TableBody items={allDoctorGroup || []}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

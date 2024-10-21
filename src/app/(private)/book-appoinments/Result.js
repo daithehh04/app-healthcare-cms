@@ -5,18 +5,16 @@ import "react-quill/dist/quill.snow.css"; // Quill styles
 // Sử dụng dynamic import để tránh lỗi SSR (Server-Side Rendering)
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
-const Result = () => {
-  const [content, setContent] = useState("");
-
+const Result = ({ setResults, results }) => {
   const handleContentChange = (value) => {
-    setContent(value);
+    setResults(value);
   };
 
   return (
     <div>
       <p>Kết quả:</p>
       <ReactQuill
-        value={content}
+        value={results}
         onChange={handleContentChange}
         className="editor"
       />

@@ -30,8 +30,8 @@ import {
   DatePicker,
 } from "@nextui-org/react";
 import { SearchIcon } from "@/components/SearchIcon";
-import { useDispatch, useSelector } from "react-redux";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSelector } from "react-redux";
+import { useSearchParams } from "next/navigation";
 import { VerticalDotsIcon } from "@/components/VerticalDotsIcon";
 import { columns } from "./configs/columns.configs";
 import { useForm } from "react-hook-form";
@@ -47,6 +47,7 @@ import {
 import { bookAppointmentStates } from "@/stores/slices/book-appointment.slices";
 import { statusBookAppointments } from "./configs/status.configs";
 import Result from "./Result";
+import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
 const URL_IMAGE =
   "http://res.cloudinary.com/daxftrleb/image/upload/v1720449738/heathcare/vvnd7igzkatjnw2hxkk4.png";
 
@@ -67,6 +68,15 @@ const BookAppointment = () => {
   const { bookAppointments } = useSelector(bookAppointmentStates);
   const [file, setFile] = useState(null);
   const [currentBookAppointment, setCurrentBookAppointment] = useState(null);
+  const [results, setResults] = useState("");
+  useEffect(() => {
+    setResults(
+      currentBookAppointment?.results
+        ? JSON.parse(currentBookAppointment?.results)
+        : ""
+    );
+  }, [currentBookAppointment?.id]);
+
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const searchParams = useSearchParams();
@@ -116,13 +126,18 @@ const BookAppointment = () => {
     }
   }, [page]);
   const onSubmit = async (data) => {
+    const dataUpdate = {
+      status: data?.status || "pending",
+      results: results ? JSON.stringify(results) : null,
+      is_using_medicine: data?.is_using_medicine === "yes",
+      start_using_medicine: startUsing || null,
+      distance_using_medicine: data?.distance_using_medicine || null,
+    };
+    console.log("dataUpdate::", dataUpdate);
     try {
-      console.log("data?.status", data?.status);
       await updatedBookAppointment({
         id: currentBookAppointment?.id,
-        body: {
-          status: data?.status || "pending",
-        },
+        body: dataUpdate,
       }).unwrap();
       toast.success("Cập nhật lịch khám thành công");
     } catch (e) {
@@ -302,11 +317,8 @@ const BookAppointment = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onClick={() => handleView(appointment)}>
-                  Xem chi tiết
-                </DropdownItem>
                 <DropdownItem onClick={() => handleEdit(appointment)}>
-                  Sửa
+                  Cập nhật
                 </DropdownItem>
                 <DropdownItem
                   onClick={() => handleDeleteBookAppointment(appointment)}
@@ -322,6 +334,19 @@ const BookAppointment = () => {
     }
   }, []);
 
+  const nowToday = today(getLocalTimeZone());
+
+  const [startUsing, setStartUsing] = useState(null);
+  useEffect(() => {
+    setStartUsing(currentBookAppointment?.start_using_medicine);
+  }, [currentBookAppointment?.id]);
+  const handleChangeResults = (field, value) => {
+    console.log("field:", field);
+    console.log("value:", value);
+    const altCurrentAppointment = _.clone(currentBookAppointment);
+    altCurrentAppointment[field] = value;
+    setCurrentBookAppointment(altCurrentAppointment);
+  };
   const contentModalBookAppointment = (
     <div>
       <div className="flex items-center gap-5">
@@ -345,7 +370,7 @@ const BookAppointment = () => {
         </div>
         {uploadedImageDoctor ? (
           <Image
-            className="rounded-[50%] object-cover w-[80px] h-[80px] object-cover"
+            className="rounded-[50%] w-[80px] h-[80px] object-cover"
             src={uploadedImageDoctor}
             alt="Uploaded"
             width="80"
@@ -404,19 +429,46 @@ const BookAppointment = () => {
         )}
       </div>
       <div className="mt-4">
-        <Result />
+        <Result setResults={setResults} results={results} />
       </div>
       <div className="mt-4">
-        <RadioGroup label="Cần sử dụng thuốc không">
-          <Radio value="1">Có</Radio>
-          <Radio value="0">Không</Radio>
+        <RadioGroup
+          label="Cần sử dụng thuốc không"
+          {...register("is_using_medicine", {})}
+          onValueChange={(value) =>
+            handleChangeResults("is_using_medicine", value)
+          }
+          defaultValue={
+            currentBookAppointment?.is_using_medicine ? "yes" : "no"
+          }
+        >
+          <Radio value="yes">Có</Radio>
+          <Radio value="no">Không</Radio>
         </RadioGroup>
       </div>
       <div className="mt-4">
         <p>Thông tin sử dụng thuốc:</p>
         <div className="flex gap-10 mt-2">
-          <Input label="Quãng thời gian dùng mỗi lần (ngày)" />
-          <DatePicker label="Ngày bắt đầu dùng" className="max-w-[300px]" />
+          <Input
+            value={currentBookAppointment?.distance_using_medicine}
+            onValueChange={(value) =>
+              handleChangeResults("distance_using_medicine", value)
+            }
+            label="Khoảng thời gian dùng mỗi lần (ngày)"
+            {...register("distance_using_medicine", {})}
+          />
+          <DatePicker
+            {...register("start_using_medicine", {})}
+            defaultValue={startUsing}
+            label="Ngày bắt đầu dùng"
+            className="max-w-[300px]"
+            minValue={nowToday}
+            onChange={(value) => {
+              const dataDate = Object?.values(value);
+              const date = `${dataDate[2]}-${dataDate[3]}-${dataDate[4]}T00:00:00Z`;
+              setStartUsing(date);
+            }}
+          />
         </div>
       </div>
     </div>
@@ -477,7 +529,7 @@ const BookAppointment = () => {
                   </Button>
                   {type !== "view" && (
                     <Button type="submit" isLoading={loading} color="primary">
-                      {type === "add" ? "Thêm" : "Sửa"}
+                      {type === "add" ? "Thêm" : "Cập nhật"}
                     </Button>
                   )}
                 </ModalFooter>
