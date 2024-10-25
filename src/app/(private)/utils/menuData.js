@@ -1,5 +1,5 @@
 import { FaBookOpen } from "react-icons/fa6";
-import { HiUserGroup } from "react-icons/hi2";
+import { BsCashCoin } from "react-icons/bs";
 import { GiMedicines } from "react-icons/gi";
 import { FaCircleUser } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md";
@@ -40,6 +40,11 @@ export const menu = [
     title: "Lịch khám",
     path: "/book-appoinments",
     icon: <FaBookOpen className="text-[20px] text-[#404040]" />,
+  },
+  {
+    title: "Voucher",
+    path: "/vouchers",
+    icon: <BsCashCoin className="text-[20px] text-[#404040]" />,
   },
   {
     title: "Bài viết",

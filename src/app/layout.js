@@ -4,6 +4,7 @@ import getMetadata from '@/configs/site.config';
 import Providers from "../components/Providers";
 import { fontSans } from '@/configs/font.config';
 import '@/styles/globals.scss';
+import "react-datepicker/dist/react-datepicker.css";
 import { clsx } from "clsx";
 export async function generateMetadata() {
   const metadata = getMetadata('Trang chủ');

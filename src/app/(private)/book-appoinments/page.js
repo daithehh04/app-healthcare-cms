@@ -25,9 +25,6 @@ import {
   Image,
   Select,
   SelectItem,
-  RadioGroup,
-  Radio,
-  DatePicker,
 } from "@nextui-org/react";
 import { SearchIcon } from "@/components/SearchIcon";
 import { useSelector } from "react-redux";
@@ -48,6 +45,7 @@ import { bookAppointmentStates } from "@/stores/slices/book-appointment.slices";
 import { statusBookAppointments } from "./configs/status.configs";
 import Result from "./Result";
 import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
+import { useGetVoucherByCodeMutation } from "@/stores/slices/api/voucher.slices.api";
 const URL_IMAGE =
   "http://res.cloudinary.com/daxftrleb/image/upload/v1720449738/heathcare/vvnd7igzkatjnw2hxkk4.png";
 
@@ -68,6 +66,26 @@ const BookAppointment = () => {
   const { bookAppointments } = useSelector(bookAppointmentStates);
   const [file, setFile] = useState(null);
   const [currentBookAppointment, setCurrentBookAppointment] = useState(null);
+  const [voucherAppointment, setVoucherAppointment] = useState(null);
+  const [getVoucherByCode, { isLoading: loadingGetVoucherByCode }] =
+    useGetVoucherByCodeMutation();
+
+  async function handleGetVoucherByCode(appointment) {
+    if (appointment?.voucher_code) {
+      try {
+        const response = await getVoucherByCode({
+          userId: appointment?.user?.id,
+          voucherCode: appointment?.voucher_code,
+        }).unwrap();
+
+        if (response) {
+          setVoucherAppointment(response.data);
+        }
+      } catch (error) {
+        console.log("error:", error);
+      }
+    }
+  }
   const [results, setResults] = useState("");
   useEffect(() => {
     setResults(
@@ -133,7 +151,6 @@ const BookAppointment = () => {
       start_using_medicine: startUsing || null,
       distance_using_medicine: data?.distance_using_medicine || null,
     };
-    console.log("dataUpdate::", dataUpdate);
     try {
       await updatedBookAppointment({
         id: currentBookAppointment?.id,
@@ -160,7 +177,8 @@ const BookAppointment = () => {
     onOpenChange(false);
   };
   const handleEdit = useCallback(
-    (appointment) => {
+    async (appointment) => {
+      await handleGetVoucherByCode(appointment);
       setType("edit");
       setCurrentBookAppointment(appointment);
       setUploadedImageDoctor(appointment?.doctor?.image);
@@ -347,8 +365,24 @@ const BookAppointment = () => {
     altCurrentAppointment[field] = value;
     setCurrentBookAppointment(altCurrentAppointment);
   };
+
   const contentModalBookAppointment = (
     <div>
+      {voucherAppointment && (
+        <div className="flex items-center gap-4 p-3 mb-5 border-2 border-pink-600 rounded-lg w-fit">
+          <div className="font-bold">Voucher:</div>
+          <div>
+            <div className="flex">
+              <div>{voucherAppointment?.name}</div>
+              <div>({voucherAppointment?.voucher_code})</div>
+            </div>
+            <div>
+              to:
+              {moment(voucherAppointment?.expired_at).format("DD-MM-YYYY")}
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex items-center gap-5">
         <div className="flex flex-1">
           <Input
@@ -430,46 +464,6 @@ const BookAppointment = () => {
       </div>
       <div className="mt-4">
         <Result setResults={setResults} results={results} />
-      </div>
-      <div className="mt-4">
-        <RadioGroup
-          label="Cần sử dụng thuốc không"
-          {...register("is_using_medicine", {})}
-          onValueChange={(value) =>
-            handleChangeResults("is_using_medicine", value)
-          }
-          defaultValue={
-            currentBookAppointment?.is_using_medicine ? "yes" : "no"
-          }
-        >
-          <Radio value="yes">Có</Radio>
-          <Radio value="no">Không</Radio>
-        </RadioGroup>
-      </div>
-      <div className="mt-4">
-        <p>Thông tin sử dụng thuốc:</p>
-        <div className="flex gap-10 mt-2">
-          <Input
-            value={currentBookAppointment?.distance_using_medicine}
-            onValueChange={(value) =>
-              handleChangeResults("distance_using_medicine", value)
-            }
-            label="Khoảng thời gian dùng mỗi lần (ngày)"
-            {...register("distance_using_medicine", {})}
-          />
-          <DatePicker
-            {...register("start_using_medicine", {})}
-            defaultValue={startUsing}
-            label="Ngày bắt đầu dùng"
-            className="max-w-[300px]"
-            minValue={nowToday}
-            onChange={(value) => {
-              const dataDate = Object?.values(value);
-              const date = `${dataDate[2]}-${dataDate[3]}-${dataDate[4]}T00:00:00Z`;
-              setStartUsing(date);
-            }}
-          />
-        </div>
       </div>
     </div>
   );

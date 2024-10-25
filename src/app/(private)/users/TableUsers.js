@@ -8,7 +8,6 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-  User,
   Chip,
 } from "@nextui-org/react";
 import { useGetAllUsersQuery } from "@/stores/slices/api/user.slices.api";
@@ -23,11 +22,8 @@ import {
   Pagination,
 } from "@nextui-org/react";
 import { FaRegEye } from "react-icons/fa6";
-import { MdDelete } from "react-icons/md";
-import Image from "next/image";
 import { IoWarningOutline } from "react-icons/io5";
 import _ from "lodash";
-import { toast } from "sonner";
 export const SERVER_URL = process.env.SERVER_URL;
 
 function TableUsers() {
@@ -49,12 +45,6 @@ function TableUsers() {
   };
   const [query, setQuery] = useState(queryInit);
   const { data, isLoading } = useGetAllUsersQuery(query);
-  function checkAndPrint(text) {
-    if (text.length > 64) {
-      return text.substring(0, 64) + "...";
-    }
-    return text;
-  }
   const renderCell = useCallback((user, columnKey) => {
     const cellValue = user[columnKey];
 

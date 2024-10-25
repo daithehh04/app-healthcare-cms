@@ -14,4 +14,5 @@ export const endPointApi = {
   CATEGORY_MEDICINE: "/category-medicine",
   BRANCH: "/branch",
   BRANCHES: "/branches",
+  VOUCHER: "/voucher",
 };
