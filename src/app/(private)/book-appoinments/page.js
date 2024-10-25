@@ -173,6 +173,7 @@ const BookAppointment = () => {
     reset();
     setFile(null);
     setType("add");
+    setVoucherAppointment(null);
     setUploadedImageDoctor(null);
     onOpenChange(false);
   };
@@ -358,15 +359,8 @@ const BookAppointment = () => {
   useEffect(() => {
     setStartUsing(currentBookAppointment?.start_using_medicine);
   }, [currentBookAppointment?.id]);
-  const handleChangeResults = (field, value) => {
-    console.log("field:", field);
-    console.log("value:", value);
-    const altCurrentAppointment = _.clone(currentBookAppointment);
-    altCurrentAppointment[field] = value;
-    setCurrentBookAppointment(altCurrentAppointment);
-  };
 
-  const contentModalBookAppointment = (
+  const contentModalBookAppointment = !loadingGetVoucherByCode && (
     <div>
       {voucherAppointment && (
         <div className="flex items-center gap-4 p-3 mb-5 border-2 border-pink-600 rounded-lg w-fit">
