@@ -1,5 +1,6 @@
 "use client";
 import React, { useCallback, useState } from "react";
+import { nanoid } from "nanoid";
 import DatePicker from "react-datepicker";
 import {
   Modal,
@@ -233,6 +234,14 @@ function TableVoucher() {
     onOpenChange();
   };
 
+  const handleGenerateVoucherCode = () => {
+    const code = nanoid();
+    setVoucherDetail({
+      ...voucherDetail,
+      voucher_code: code,
+    });
+  };
+
   const getBodyModal = () => {
     switch (typeAction) {
       case "view":
@@ -282,6 +291,12 @@ function TableVoucher() {
               value={voucherDetail?.name}
               onChange={(e) => handleChangeVoucher("name", e.target.value)}
             />
+            <p
+              onClick={handleGenerateVoucherCode}
+              className="mt-2 ml-auto hover:underline hover:cursor-pointer text-[#1B9CFC]"
+            >
+              Generate voucher code
+            </p>
             <Input
               label="Voucher code"
               isInvalid={errors?.["voucher_code"] ? true : false}
@@ -373,7 +388,7 @@ function TableVoucher() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={allVouchers}>
+        <TableBody items={allVouchers || []}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
