@@ -34,6 +34,7 @@ import { IoWarningOutline } from "react-icons/io5";
 import _ from "lodash";
 import { toast } from "sonner";
 import Loading from "@/components/Loading";
+import Link from "next/link";
 export const SERVER_URL = process.env.SERVER_URL;
 
 function TableBranches() {
@@ -42,6 +43,7 @@ function TableBranches() {
     limit: 4,
   };
   const [branchDetail, setBranchDetail] = useState(null);
+  console.log("====branchDetail====::", branchDetail);
   const [branchDelete, setBranchDelete] = useState(null);
   const [branchClone, setDoctorGroupClone] = useState(null);
   const isChange = _.isEqual(branchClone, branchDetail);
@@ -59,7 +61,7 @@ function TableBranches() {
 
   const handleCheckCreate = () => {
     if (branchDetail) {
-      if (Object.keys(branchDetail).length === 1 && !isError) {
+      if (Object.keys(branchDetail).length === 3 && !isError) {
         return true;
       }
     }
@@ -133,8 +135,7 @@ function TableBranches() {
     setErrors({});
     onOpen();
   };
-  const handleChangeDoctorGroup = (field, value) => {
-    console.log(field, value);
+  const handleChangeBranch = (field, value) => {
     validate(field, value);
     setBranchDetail({
       ...branchDetail,
@@ -231,9 +232,30 @@ function TableBranches() {
               errorMessage={errors?.["address"]}
               value={branchDetail?.address}
               onChange={(e) =>
-                handleChangeDoctorGroup("address", e.target.value)
+                handleChangeBranch("address", e.target.value)
               }
             />
+            <div className="flex gap-5">
+              <Input
+                label="Kinh độ (Longitude)"
+                isInvalid={errors?.["longitude"] ? true : false}
+                errorMessage={errors?.["longitude"]}
+                value={branchDetail?.longitude}
+                onChange={(e) =>
+                  handleChangeBranch("longitude", e.target.value)
+                }
+              />
+              <Input
+                label="Vĩ độ (Latitude)"
+                isInvalid={errors?.["latitude"] ? true : false}
+                errorMessage={errors?.["latitude"]}
+                value={branchDetail?.latitude}
+                onChange={(e) =>
+                  handleChangeBranch("latitude", e.target.value)
+                }
+              />
+            </div>
+            <p>Bạn có thể lấy thông tin về kinh độ và vĩ độ theo địa chỉ của bạn <Link underline="always" className="text-blue-600 underline" color="primary" target="_blank"  href={'https://www.latlong.net/'}>tại đây!</Link></p>
           </>
         );
       case "create":
@@ -245,9 +267,32 @@ function TableBranches() {
               errorMessage={errors?.["address"]}
               value={branchDetail?.address}
               onChange={(e) =>
-                handleChangeDoctorGroup("address", e.target.value)
+                handleChangeBranch("address", e.target.value)
               }
             />
+            <div className="flex gap-5">
+              <Input
+                label="Kinh độ (Longitude)"
+                isInvalid={errors?.["longitude"] ? true : false}
+                errorMessage={errors?.["longitude"]}
+                value={branchDetail?.longitude}
+                type="number"
+                onChange={(e) =>
+                  handleChangeBranch("longitude", e.target.value)
+                }
+              />
+              <Input
+                label="Vĩ độ (Latitude)"
+                isInvalid={errors?.["latitude"] ? true : false}
+                errorMessage={errors?.["latitude"]}
+                type="number"
+                value={branchDetail?.latitude}
+                onChange={(e) =>
+                  handleChangeBranch("latitude", e.target.value)
+                }
+              />
+            </div>
+            <p>Bạn có thể lấy thông tin về kinh độ và vĩ độ theo địa chỉ của bạn <Link underline="always" className="text-blue-600 underline" color="primary" target="_blank" isExternal href={'https://www.latlong.net/'}>tại đây!</Link></p>
           </>
         );
       case "delete":
