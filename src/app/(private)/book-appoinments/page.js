@@ -119,7 +119,7 @@ const BookAppointment = () => {
   );
   useEffect(() => {
     if (currentBookAppointment) {
-      setValue("nameDoctor", currentBookAppointment.doctor.name);
+      setValue("nameDoctor", currentBookAppointment.doctor.name || 'Bác sĩ');
       setValue(
         "nameUser",
         currentBookAppointment.user.name || currentBookAppointment.user.email
